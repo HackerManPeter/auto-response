@@ -4,8 +4,23 @@ class Form:
         self.API_TOKEN = API_TOKEN
         self.FORM_ID = FORM_ID
 
-    def get_responses(self, **query_params):
-        '''Returns form responses in json format'''
+    def __get_answers(self, answers) -> list:
+        database = list()
+
+        record = dict()
+
+        for i in range(len(answers)):
+            user = answers[i]
+            for j in range(len(user['answers'])):
+                question = user['answers'][j]
+                record[question['field']['id']] = question[list(question.keys())[-1]]
+                database.append(record)
+
+        return database
+
+    def get_answers(self, **query_params):
+        '''Returns a list of dictionaries where each key is a question ID 
+            and the value is the users answer'''
 
         url = f'https://api.typeform.com/forms/{self.FORM_ID}/responses'
         headers = {'Authorization': f'Bearer {self.API_TOKEN}'}
@@ -20,5 +35,10 @@ class Form:
         self.page_count = response.json()['page_count']
         self.total_items = response.json()['total_items']
 
-        return response.json()['items']
+        answers = response.json()['items']
 
+        data = self.__get_answers(answers)
+
+        return data
+
+        
