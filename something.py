@@ -27,3 +27,20 @@ payload = {
 
 response = requests.get(url, headers=headers, params=payload)
 answers = response.json()['items']
+
+data = list()
+for response in range(len(answers)):
+    responses = dict()
+    user = answers[response]['answers']
+    responses['first_name'] = user[0][list(user[0])[-1]]
+    responses['last_name'] = user[1][list(user[1])[-1]]
+    responses['email'] = user[2][list(user[2])[-1]]
+    responses['phone_number'] = user[3][list(user[3])[-1]]
+
+    data.append(responses)
+
+
+content = json.dumps(data)
+
+with open('data.json', 'w') as data:
+    data.write(content)
