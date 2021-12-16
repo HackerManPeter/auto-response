@@ -19,7 +19,7 @@ class Form:
 
         return database
 
-    def get_answers(self, **query_params):
+    def get_answers(self, **query_params) -> list:
         '''Returns a list of dictionaries where each key is a question ID 
             and the value is the users answer'''
 
@@ -38,21 +38,8 @@ class Form:
 
         answers = response.json()['items']
 
-        data = self.__get_answers(answers)
+        data = self.__sort_answers(answers)
 
         return data
 
-
-if __name__ == '__main__':
-    import os
-    import json
-    from dotenv import load_dotenv
     
-    load_dotenv()
-    API_TOKEN = os.environ['FORM_TOKEN']
-    FORM_ID = os.environ['FORM_ID']
-    gdsc = Form(API_TOKEN, FORM_ID)
-
-    answers = gdsc.get_answers(completed=True, page_size=2)
-
-    print(json.dumps(answers, indent=5))
