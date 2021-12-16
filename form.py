@@ -4,17 +4,18 @@ class Form:
         self.API_TOKEN = API_TOKEN
         self.FORM_ID = FORM_ID
 
-    def __get_answers(self, answers) -> list:
+    def __sort_answers(self, answers) -> list:
+        '''Returns a list of dictionaries where each key is a question ID 
+            and the value is the users answer'''
         database = list()
 
-        record = dict()
-
         for i in range(len(answers)):
+            record = dict()
             user = answers[i]
             for j in range(len(user['answers'])):
                 question = user['answers'][j]
                 record[question['field']['id']] = question[list(question.keys())[-1]]
-                database.append(record)
+            database.append(record)
 
         return database
 
@@ -41,4 +42,17 @@ class Form:
 
         return data
 
-        
+
+if __name__ == '__main__':
+    import os
+    import json
+    from dotenv import load_dotenv
+    
+    load_dotenv()
+    API_TOKEN = os.environ['FORM_TOKEN']
+    FORM_ID = os.environ['FORM_ID']
+    gdsc = Form(API_TOKEN, FORM_ID)
+
+    answers = gdsc.get_answers(completed=True, page_size=2)
+
+    print(json.dumps(answers, indent=5))
