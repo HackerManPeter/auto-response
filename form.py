@@ -8,14 +8,14 @@ class Form:
         headers = {'Authorization': f'Bearer {self.API_TOKEN}'}
 
         try:
-            self.my_response = requests.get(url, headers=headers)
-            if self.my_response.raise_for_status():
+            self.__response = requests.get(url, headers=headers)
+            if self.__response.raise_for_status():
                 quit()
         except requests.exceptions.RequestException as e:
             raise(e)
 
-        self.page_count = self.my_response.json()['page_count']
-        self.total_items = self.my_response.json()['total_items']
+        self.page_count = self.__response.json()['page_count']
+        self.total_items = self.__response.json()['total_items']
 
 
     def __sort_answers(self, answers) -> list:
@@ -58,7 +58,7 @@ class Form:
 
     def get_question_ids(self):
         ids = list()
-        question_ids = self.my_response.json()['items'][0]['answers']
+        question_ids = self.__response.json()['items'][0]['answers']
 
         for question_number in range(len(question_ids)):
             question_ids[question_number]['field']['id']
@@ -80,5 +80,4 @@ if __name__ == '__main__':
     
     response = Form(API_TOKEN, FORM_ID)
 
-    # print(response.my_response.json()['items'][0]['answers'][2]['field']['id'])
     response.get_question_ids()
