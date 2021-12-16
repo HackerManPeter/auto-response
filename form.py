@@ -4,6 +4,20 @@ class Form:
         self.API_TOKEN = API_TOKEN
         self.FORM_ID = FORM_ID
 
+        url = f'https://api.typeform.com/forms/{self.FORM_ID}/responses'
+        headers = {'Authorization': f'Bearer {self.API_TOKEN}'}
+
+        try:
+            self.my_response = requests.get(url, headers=headers)
+            if self.my_response.raise_for_status():
+                quit()
+        except requests.exceptions.RequestException as e:
+            raise(e)
+
+        self.page_count = self.my_response.json()['page_count']
+        self.total_items = self.my_response.json()['total_items']
+
+
     def __sort_answers(self, answers) -> list:
         '''Returns a list of dictionaries where each key is a question ID 
             and the value is the users answer'''
@@ -19,6 +33,7 @@ class Form:
 
         return database
 
+
     def get_answers(self, **query_params) -> list:
         '''Returns a list of dictionaries where each key is a question ID 
             and the value is the users answer'''
@@ -32,7 +47,6 @@ class Form:
                 quit()
         except requests.exceptions.RequestException as e:
             raise(e)
-        
         self.page_count = response.json()['page_count']
         self.total_items = response.json()['total_items']
 
@@ -42,4 +56,29 @@ class Form:
 
         return data
 
+    def get_question_ids(self):
+        ids = list()
+        question_ids = self.my_response.json()['items'][0]['answers']
+
+        for question_number in range(len(question_ids)):
+            question_ids[question_number]['field']['id']
+
+        return ids
+
+        
+
+
+if __name__ == '__main__':
+    import os
+    import json
+
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    API_TOKEN = os.environ['FORM_TOKEN']
+    FORM_ID = os.environ['FORM_ID']
     
+    response = Form(API_TOKEN, FORM_ID)
+
+    # print(response.my_response.json()['items'][0]['answers'][2]['field']['id'])
+    response.get_question_ids()
