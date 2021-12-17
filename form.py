@@ -17,6 +17,22 @@ class Form:
         self.page_count = self.__response.json()['page_count']
         self.total_items = self.__response.json()['total_items']
 
+    def __return_formatted_dict(self, dictionary) -> dict:
+
+        for key, value in dictionary.items():
+            if type(value) == dict:
+                try:
+                    dictionary[key] = value['label']
+                except KeyError:
+                    try:
+                        dictionary[key] = value['labels']
+                    except KeyError:
+                        dictionary[key] = value['ids']
+        
+        return dictionary
+
+
+
 
     def __sort_answers(self, answers) -> list:
         '''Returns a list of dictionaries where each key is a question ID 
@@ -29,6 +45,7 @@ class Form:
             for j in range(len(user['answers'])):
                 question = user['answers'][j]
                 record[question['field']['id']] = question[list(question.keys())[-1]]
+            record = self.__return_formatted_dict(record)
             database.append(record)
 
         return database
@@ -41,16 +58,16 @@ class Form:
         url = f'https://api.typeform.com/forms/{self.FORM_ID}/responses'
         headers = {'Authorization': f'Bearer {self.API_TOKEN}'}
 
-        try:
-            response = requests.get(url, headers=headers, params=query_params)
-            if response.raise_for_status():
-                quit()
-        except requests.exceptions.RequestException as e:
-            raise(e)
-        self.page_count = response.json()['page_count']
-        self.total_items = response.json()['total_items']
+        if bool(query_params):
+            print('I ran')
+            try:
+                self.__response = requests.get(url, headers=headers, params=query_params)
+                if self.__response.raise_for_status():
+                    quit()
+            except requests.exceptions.RequestException as e:
+                raise(e)
 
-        answers = response.json()['items']
+        answers = self.__response.json()['items']
 
         data = self.__sort_answers(answers)
 
@@ -61,7 +78,7 @@ class Form:
         question_ids = self.__response.json()['items'][0]['answers']
 
         for question_number in range(len(question_ids)):
-            question_ids[question_number]['field']['id']
+            ids.append(question_ids[question_number]['field']['id'])
 
         return ids
 
@@ -80,4 +97,6 @@ if __name__ == '__main__':
     
     response = Form(API_TOKEN, FORM_ID)
 
-    response.get_question_ids()
+    answers = response.get_answers()
+
+    # print(json.dumps(answers, indent=5))
