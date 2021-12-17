@@ -59,7 +59,6 @@ class Form:
         headers = {'Authorization': f'Bearer {self.API_TOKEN}'}
 
         if bool(query_params):
-            print('I ran')
             try:
                 self.__response = requests.get(url, headers=headers, params=query_params)
                 if self.__response.raise_for_status():
@@ -98,5 +97,3 @@ if __name__ == '__main__':
     response = Form(API_TOKEN, FORM_ID)
 
     answers = response.get_answers()
-
-    # print(json.dumps(answers, indent=5))
