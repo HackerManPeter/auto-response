@@ -27,7 +27,7 @@ class Form:
                     try:
                         dictionary[key] = value['labels']
                     except KeyError:
-                        dictionary[key] = value['ids']
+                        dictionary[key] = value['other']
         
         return dictionary
 
