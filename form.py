@@ -91,7 +91,7 @@ if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
 
-    API_TOKEN = os.environ['FORM_TOKEN']
+    API_TOKEN = os.environ['API_TOKEN']
     FORM_ID = os.environ['FORM_ID']
     
     response = Form(API_TOKEN, FORM_ID)
