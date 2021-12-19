@@ -9,6 +9,7 @@ python-dotenv = "*"
 requests = "*"
 pymongo = {extras = ["srv"], version = "*"}
 ipykernel = "*"
+schedule = "*"
 
 [dev-packages]
 
