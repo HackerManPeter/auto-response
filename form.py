@@ -38,12 +38,13 @@ class Form:
         '''Returns a list of dictionaries where each key is a question ID 
             and the value is the users answer'''
         database = list()
-
+        # for i in range(len(answers)-1, -1, -1): # - >If I ever want to sort in reverse
         for i in range(len(answers)):
             record = dict()
             user = answers[i]
             for j in range(len(user['answers'])):
                 question = user['answers'][j]
+                record['token'] = user['token']
                 record[question['field']['id']] = question[list(question.keys())[-1]]
             record = self.__return_formatted_dict(record)
             database.append(record)
@@ -96,4 +97,5 @@ if __name__ == '__main__':
     
     response = Form(API_TOKEN, FORM_ID)
 
-    answers = response.get_answers()
+    answers = response.get_answers(page_size=1000, completed=True)
+    print(answers)
