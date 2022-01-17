@@ -6,6 +6,7 @@ from form import Form
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
+
 def repopulate_database(collection, form_object):
     try:
         collection.delete_many({})
@@ -14,7 +15,7 @@ def repopulate_database(collection, form_object):
         print(err)
 
     all_entries = form_object.get_answers(page_size=1000, completed=True)
-    
+
     try:
         collection.insert_many(all_entries)
         print('Succesfully Updated')
@@ -23,12 +24,13 @@ def repopulate_database(collection, form_object):
 
 
 def get_new_entries(collection, form_object, difference):
-    response_cursor = collection.find({}).sort('$natural', -1).limit(difference + 1)
+    response_cursor = collection.find({}).sort(
+        '$natural', -1).limit(difference + 1)
     last_response = list(response_cursor)[0]
-    new_entries = form_object.get_answers(completed=True, after=last_response['token'], page_size=1000)
+    new_entries = form_object.get_answers(
+        completed=True, after=last_response['token'], page_size=1000)
     return new_entries
 
-    
 
 def main():
     load_dotenv()
@@ -55,6 +57,7 @@ def main():
             print(err)
             SystemExit(0)
     print("No new updates")
+
 
 if __name__ == '__main__':
     schedule.every(5).seconds.do(main)
